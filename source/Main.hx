@@ -13,6 +13,9 @@ import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.display.StageScaleMode;
+#if mobile
+import mobile.backend.MobileScaleMode;
+#end
 
 import mikolka.vslice.components.ALSoftConfig; // Make sure to include this on compile!
 import vlc.MP4Handler;
@@ -146,8 +149,12 @@ class Main extends Sprite
 		#end
 
 		#if android
-                FlxG.android.preventDefaultKeys = [BACK];
-                #end
+        FlxG.android.preventDefaultKeys = [BACK];
+        #end
+        
+        #if mobile
+		FlxG.scaleMode = new MobileScaleMode();
+		#end
 		
 		#if CRASH_HANDLER
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);

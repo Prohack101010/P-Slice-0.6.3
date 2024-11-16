@@ -17,9 +17,6 @@ jobs:
   # This workflow contains a single job called "build"
   buildAndroid:
     runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        flag: [ONLY_ARMV7, ONLY_ARM64]
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -74,12 +71,12 @@ jobs:
       - name: Create Version Tag
         run: echo "${{github.run_id}}" > VERSION
       - name: Compile
-        run: haxelib run lime build android --app-version="4.0.0-${{ github.run_id}}"  -D ${{matrix.flag}}
+        run: haxelib run lime build android --app-version="4.0.0-${{ github.run_id}}"  -D armv7_disabled -arm64 -final -release
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.3.4
         with:
-          name: P-Slice.0.6.3.android-${{matrix.flag}}
-          path: export/PE0.6.3/release/android/bin/app/build/outputs/apk/debug
+          name: P-Slice-0.6.3-Android
+          path: export/PE0.6.3/release/android/bin/app/build/outputs/apk/release
   buildLinux:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest

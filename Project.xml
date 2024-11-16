@@ -220,15 +220,11 @@
 			<android gradle-version="7.4.2" gradle-plugin="7.3.1" />
                 </config>
 	</section>
+	
+	<!-- Do whatever you want I'm tired uninstall and install everytime -->
+	<certificate path="key.keystore" password="psychengine" alias="psychport" alias-password="psychengine" if="android" unless="debug" />
 
-	<section if="mobile">
-		<define name="ONLY_ARM64" if="arm64" />
-		<define name="ONLY_ARMV7" if="armv7" />
-		<architecture exclude="armv7" if="ONLY_ARM64" unless="UNIVERSAL"/>
-		<architecture include="arm64" if="ONLY_ARM64 || UNIVERSAL" />
-		<architecture include="armv7" if="ONLY_ARMV7 || UNIVERSAL" />
-		<architecture exclude="arm64" if="ONLY_ARMV7" unless="UNIVERSAL"/>
-	</section>
+	<architecture name="arm64" exclude="armv7" if="armv7_disabled" />
 
 	<!-- _________________________________ Custom _______________________________ -->
 

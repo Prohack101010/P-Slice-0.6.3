@@ -238,8 +238,8 @@ class FreeplayState extends MusicBeatSubstate
 		}
 		currentCharacter = result;
 
-		styleData = FreeplayStyleRegistry.instance.fetchEntry(currentCharacter.getFreeplayStyleID());
-		if (styleData == null) styleData = FreeplayStyleRegistry.instance.fetchEntry("bf");
+		//styleData = FreeplayStyleRegistry.instance.fetchEntry(currentCharacter.getFreeplayStyleID());
+		styleData = FreeplayStyleRegistry.instance.fetchEntry("bf");
 
 		fromCharSelect = params?.fromCharSelect;
 
