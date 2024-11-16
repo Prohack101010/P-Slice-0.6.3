@@ -1,94 +1,67 @@
 package mobile.flixel;
 
-import flixel.FlxG;
+import flixel.graphics.frames.FlxAtlasFrames;
+import flixel.graphics.FlxGraphic;
 import flixel.group.FlxSpriteGroup;
-import flixel.util.FlxColor;
-import flixel.util.FlxDestroyUtil;
-import openfl.display.BitmapData;
-import openfl.display.Shape;
-import mobile.flixel.FlxButton;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
+import flixel.FlxSprite;
 
-/**
- * A zone with 4 hint's (A hitbox).
- * It's really easy to customize the layout.
- *
- * @author Mihai Alexandru (M.A. Jigsaw)
- */
-class FlxHitbox extends FlxSpriteGroup
-{
-	public var hints(default, null):Array<FlxButton>;
+class FlxHitbox extends FlxSpriteGroup {
+	public var hitbox:FlxSpriteGroup;
 
-	/**
-	 * Create the zone.
-	 * 
-	 * @param ammo The ammount of hints you want to create.
-	 * @param perHintWidth The width that the hints will use.
-	 * @param perHintHeight The height that the hints will use.
-	 * @param colors The color per hint.
-	 */
-	public function new(ammo:UInt, perHintWidth:Int, perHintHeight:Int, colors:Array<FlxColor>):Void
-	{
+	public var buttonLeft:FlxButton;
+	public var buttonDown:FlxButton;
+	public var buttonUp:FlxButton;
+	public var buttonRight:FlxButton;
+
+	public var orgAlpha:Float = 0.75;
+	public var orgAntialiasing:Bool = true;
+	
+	public function new(?alphaAlt:Float = 0.75, ?antialiasingAlt:Bool = true) {
 		super();
 
-		hints = new Array<FlxButton>();
+		orgAlpha = alphaAlt;
+		orgAntialiasing = antialiasingAlt;
 
-		if (colors == null || (colors != null && colors.length < ammo))
-			colors = [0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF];
+		buttonLeft = new FlxButton(0, 0);
+		buttonDown = new FlxButton(0, 0);
+		buttonUp = new FlxButton(0, 0);
+		buttonRight = new FlxButton(0, 0);
 
-		for (i in 0...ammo)
-			add(hints[i] = createHint(i * perHintWidth, 0, perHintWidth, perHintHeight, colors[i]));
+		hitbox = new FlxSpriteGroup();
+		hitbox.add(add(buttonLeft = createhitbox(0, 0, "left")));
+		hitbox.add(add(buttonDown = createhitbox(320, 0, "down")));
+		hitbox.add(add(buttonUp = createhitbox(640, 0, "up")));
+		hitbox.add(add(buttonRight = createhitbox(960, 0, "right")));
 
-		scrollFactor.set();
+		var hitbox_hint:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('mobilecontrols/hitbox/hitbox_hint'));
+		hitbox_hint.antialiasing = orgAntialiasing;
+		hitbox_hint.alpha = orgAlpha;
+		add(hitbox_hint);
 	}
 
-	/**
-	 * Clean up memory.
-	 */
-	override public function destroy():Void
-	{
+	public function createhitbox(x:Float = 0, y:Float = 0, frames:String) {
+		var button = new FlxButton(x, y);
+		button.loadGraphic(FlxGraphic.fromFrame(getFrames().getByName(frames)));
+		button.antialiasing = orgAntialiasing;
+		button.alpha = 0;// sorry but I can't hard lock the hitbox alpha
+		button.onDown.callback = function (){FlxTween.num(0, 0.75, 0.075, {ease:FlxEase.circInOut}, function(alpha:Float){ button.alpha = alpha;});};
+		button.onUp.callback = function (){FlxTween.num(0.75, 0, 0.1, {ease:FlxEase.circInOut}, function(alpha:Float){ button.alpha = alpha;});}
+		button.onOut.callback = function (){FlxTween.num(button.alpha, 0, 0.2, {ease:FlxEase.circInOut}, function(alpha:Float){ button.alpha = alpha;});}
+		return button;
+	}
+
+	public function getFrames():FlxAtlasFrames {
+		return Paths.getSparrowAtlas('mobilecontrols/hitbox/hitbox');
+	}
+
+	override public function destroy():Void {
 		super.destroy();
 
-		for (i in 0...hints.length)
-			hints[i] = FlxDestroyUtil.destroy(hints[i]);
-
-		hints.splice(0, hints.length);
-	}
-
-	private function createHint(X:Float, Y:Float, Width:Int, Height:Int, Color:Int = 0xFFFFFF):FlxButton
-	{
-		var hint:FlxButton = new FlxButton(X, Y);
-		hint.loadGraphic(createHintGraphic(Width, Height, Color));
-		hint.solid = false;
-		hint.multiTouch = true;
-		hint.immovable = true;
-		hint.scrollFactor.set();
-		hint.alpha = 0.00001;
-		hint.onDown.callback = hint.onOver.callback = function()
-		{
-			if (hint.alpha != 0.2)
-				hint.alpha = 0.2;
-		}
-		hint.onUp.callback = hint.onOut.callback = function()
-		{
-			if (hint.alpha != 0.00001)
-				hint.alpha = 0.00001;
-		}
-		#if FLX_DEBUG
-		hint.ignoreDrawDebug = true;
-		#end
-		return hint;
-	}
-
-	private function createHintGraphic(Width:Int, Height:Int, Color:Int = 0xFFFFFF):BitmapData
-	{
-		var shape:Shape = new Shape();
-		shape.graphics.beginFill(Color);
-		shape.graphics.lineStyle(10, Color, 1);
-		shape.graphics.drawRect(0, 0, Width, Height);
-		shape.graphics.endFill();
-
-		var bitmap:BitmapData = new BitmapData(Width, Height, true, 0);
-		bitmap.draw(shape, true);
-		return bitmap;
+		buttonLeft = null;
+		buttonDown = null;
+		buttonUp = null;
+		buttonRight = null;
 	}
 }

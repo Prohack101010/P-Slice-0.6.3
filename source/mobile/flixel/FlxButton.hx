@@ -11,13 +11,11 @@ import flixel.input.FlxPointer;
 import flixel.input.IFlxInput;
 import flixel.input.touch.FlxTouch;
 import flixel.math.FlxPoint;
-#if (flixel >= "5.3.0")
-import flixel.sound.FlxSound;
-#else
-import flixel.system.FlxSound;
-#end
 import flixel.text.FlxText;
 import flixel.util.FlxDestroyUtil;
+#if desktop
+import flixel.input.mouse.FlxMouseButton;
+#end
 
 /**
  * A simple button class that calls a function when clicked by the touch.
@@ -43,6 +41,11 @@ class FlxButton extends FlxTypedButton<FlxText>
 	 * Shortcut to setting label.text
 	 */
 	public var text(get, set):String;
+
+	/**
+	 * A small invisible bounds used for colision
+	**/
+	public var bounds:FlxSprite = new FlxSprite();
 
 	/**
 	 * Creates a new `FlxButton` object with a gray background
@@ -100,6 +103,16 @@ class FlxButton extends FlxTypedButton<FlxText>
 		else
 			label.text = Text;
 		return Text;
+	}
+
+	public inline function centerInBounds()
+	{
+		setPosition(bounds.x + ((100 - frameWidth) / 2), bounds.y + ((55 - frameHeight) / 2));
+	}
+
+	public inline function centerBounds()
+	{
+		bounds.setPosition(x + ((frameWidth - 100) / 2), y + ((frameHeight - 55) / 2));
 	}
 }
 
@@ -233,7 +246,6 @@ class FlxTypedButton<T:FlxSprite> extends FlxSprite implements IFlxInput
 		super.graphicLoaded();
 
 		setupAnimation('normal', FlxButton.NORMAL);
-		setupAnimation('highlight', FlxButton.HIGHLIGHT);
 		setupAnimation('pressed', FlxButton.PRESSED);
 	}
 
@@ -377,9 +389,11 @@ class FlxTypedButton<T:FlxSprite> extends FlxSprite implements IFlxInput
 		var overlap = false;
 
 		for (camera in cameras)
+		{
 			for (touch in FlxG.touches.list)
 				if (checkInput(touch, touch, touch.justPressedPosition, camera))
 					overlap = true;
+		}
 
 		return overlap;
 	}

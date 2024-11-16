@@ -10,6 +10,18 @@ class ClientPrefs {
 	public static var favSongIds:Array<String> = [];
 
 	public static var downScroll:Bool = false;
+	public static var extraKeys:Int = 2;
+    public static var hitboxLocation:String = 'Bottom';
+    public static var hitboxmode:String = 'New';
+    public static var hitboxtype:String = 'Gradient';
+    public static var storageType:String = 'EXTERNAL';
+    public static var hitboxhint:Bool = false;
+    public static var VirtualPadAlpha:Float = 0.75;
+    public static var hitboxalpha:Float = 0.7;
+    public static var extraKeyReturn1:String = 'SHIFT';
+    public static var extraKeyReturn2:String = 'SPACE';
+    public static var extraKeyReturn3:String = 'Q';
+    public static var extraKeyReturn4:String = 'E';
 	public static var middleScroll:Bool = false;
 	public static var opponentStrums:Bool = true;
 	public static var showFPS:Bool = true;
@@ -109,6 +121,18 @@ class ClientPrefs {
 
 	public static function saveSettings() {
 		FlxG.save.data.downScroll = downScroll;
+		FlxG.save.data.extraKeys = extraKeys;
+        FlxG.save.data.hitboxLocation = hitboxLocation;
+        FlxG.save.data.hitboxhint = hitboxhint;
+        FlxG.save.data.hitboxmode = hitboxmode;
+        FlxG.save.data.hitboxtype = hitboxtype;
+        FlxG.save.data.storageType = storageType;
+        FlxG.save.data.VirtualPadAlpha = VirtualPadAlpha;
+        FlxG.save.data.hitboxalpha = hitboxalpha;
+        FlxG.save.data.extraKeyReturn1 = extraKeyReturn1;
+        FlxG.save.data.extraKeyReturn2 = extraKeyReturn2;
+        FlxG.save.data.extraKeyReturn3 = extraKeyReturn3;
+        FlxG.save.data.extraKeyReturn4 = extraKeyReturn4;
 		FlxG.save.data.middleScroll = middleScroll;
 		FlxG.save.data.opponentStrums = opponentStrums;
 		FlxG.save.data.showFPS = showFPS;
@@ -165,6 +189,42 @@ class ClientPrefs {
 		if(FlxG.save.data.downScroll != null) {
 			downScroll = FlxG.save.data.downScroll;
 		}
+		if(FlxG.save.data.extraKeys != null) {
+        	extraKeys = FlxG.save.data.extraKeys;
+        }
+        if(FlxG.save.data.hitboxLocation != null) {
+        	hitboxLocation = FlxG.save.data.hitboxLocation;
+        }
+        if(FlxG.save.data.hitboxhint != null) {
+        	hitboxhint = FlxG.save.data.hitboxhint;
+        }
+        if(FlxG.save.data.hitboxmode != null) {
+        	hitboxmode = FlxG.save.data.hitboxmode;
+        }
+        if(FlxG.save.data.hitboxtype != null) {
+        	hitboxtype = FlxG.save.data.hitboxtype;
+        }
+        if(FlxG.save.data.storageType != null) {
+        	storageType = FlxG.save.data.storageType;
+        }
+        if(FlxG.save.data.VirtualPadAlpha != null) {
+        	VirtualPadAlpha = FlxG.save.data.VirtualPadAlpha;
+        }
+        if(FlxG.save.data.hitboxalpha != null) {
+        	hitboxalpha = FlxG.save.data.hitboxalpha;
+        }
+        if(FlxG.save.data.extraKeyReturn1 != null) {
+        	extraKeyReturn1 = FlxG.save.data.extraKeyReturn1;
+        }
+        if(FlxG.save.data.extraKeyReturn2 != null) {
+        	extraKeyReturn2 = FlxG.save.data.extraKeyReturn2;
+        }
+        if(FlxG.save.data.extraKeyReturn3 != null) {
+        	extraKeyReturn3 = FlxG.save.data.extraKeyReturn3;
+        }
+        if(FlxG.save.data.extraKeyReturn4 != null) {
+        	extraKeyReturn4 = FlxG.save.data.extraKeyReturn4;
+        }
 		if(FlxG.save.data.middleScroll != null) {
 			middleScroll = FlxG.save.data.middleScroll;
 		}

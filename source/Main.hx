@@ -58,9 +58,23 @@ class Main extends Sprite
 
 	public function new()
 	{
+	                #if mobile
+	    #if android
+		SUtil.doPermissionsShit();
+		if (!FileSystem.exists(SUtil.getStorageDirectory()))
+			FileSystem.createDirectory(SUtil.getStorageDirectory());
+		#end
+		Sys.setCwd(SUtil.getStorageDirectory());
+		#end
+		
+		#if android
+		if (!FileSystem.exists(SUtil.getStorageDirectory()))
+			FileSystem.createDirectory(SUtil.getStorageDirectory());
+	    #end
+	    
 		super();
-
-		SUtil.uncaughtErrorHandler();
+		
+		SUtil.gameCrashCheck();
 
 		if (stage != null)
 		{
@@ -97,7 +111,6 @@ class Main extends Sprite
 		}
 	
 		ClientPrefs.loadDefaultKeys();
-		SUtil.checkFiles();
 		var game = new FlxGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen);
 
 		// FlxG.game._customSoundTray wants just the class, it calls new from

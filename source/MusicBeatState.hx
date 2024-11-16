@@ -14,11 +14,9 @@ import flixel.util.FlxGradient;
 import flixel.FlxState;
 import flixel.FlxCamera;
 import flixel.FlxBasic;
-#if mobileC
-import mobile.MobileControls;
-import mobile.flixel.FlxVirtualPad;
-import flixel.FlxCamera;
+#if mobile
 import flixel.input.actions.FlxActionInput;
+import mobile.flixel.FlxVirtualPad;
 import flixel.util.FlxDestroyUtil;
 #end
 
@@ -39,105 +37,97 @@ class MusicBeatState extends FlxUIState
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
 
-	#if mobileC
-	var mobileControls:MobileControls;
-	var virtualPad:FlxVirtualPad;
-	var trackedInputsMobileControls:Array<FlxActionInput> = [];
-	var trackedInputsVirtualPad:Array<FlxActionInput> = [];
+	#if mobile
+		public static var checkHitbox:Bool = false;
+	
+	var _virtualpad:FlxVirtualPad;
+	public static var mobilec:MobileControls;
+	
+	var trackedinputsUI:Array<FlxActionInput> = [];
+	var trackedinputsNOTES:Array<FlxActionInput> = [];
 
-	public function addVirtualPad(DPad:FlxDPadMode, Action:FlxActionMode):Void
-	{
-		if (virtualPad != null)
+	public function addVirtualPad(?DPad:FlxDPadMode, ?Action:FlxActionMode) {		
+		if (_virtualpad != null)
 			removeVirtualPad();
 
-		virtualPad = new FlxVirtualPad(DPad, Action);
-		add(virtualPad);
+		_virtualpad = new FlxVirtualPad(DPad, Action, 0.75, ClientPrefs.globalAntialiasing);
+		add(_virtualpad);
 
-		controls.setVirtualPadUI(virtualPad, DPad, Action);
-		trackedInputsVirtualPad = controls.trackedInputsUI;
+		controls.setVirtualPadUI(_virtualpad, DPad, Action);
+		trackedinputsUI = controls.trackedInputsUI;
 		controls.trackedInputsUI = [];
 	}
+	
+	public function removeVirtualPad() {
+		if (trackedinputsUI.length > 0)
+			controls.removeVirtualControlsInput(trackedinputsUI);
 
-	public function removeVirtualPad():Void
-	{
-		if (trackedInputsVirtualPad.length > 0)
-			controls.removeVirtualControlsInput(trackedInputsVirtualPad);
-
-		if (virtualPad != null)
-			remove(virtualPad);
+		if (_virtualpad != null)
+			remove(_virtualpad);
 	}
+	
+	public function removeMobileControls() {
+		if (trackedinputsNOTES.length > 0)
+			controls.removeVirtualControlsInput(trackedinputsNOTES);
+			
+		if (mobilec != null)
+			remove(mobilec);
+	}
+	
+	public function addMobileControls() {
+		mobilec = new MobileControls();
 
-	public function addMobileControls(DefaultDrawTarget:Bool = true):Void
-	{
-		if (mobileControls != null)
-			removeMobileControls();
-
-		mobileControls = new MobileControls();
-
-		switch (MobileControls.mode)
+		switch (mobilec.mode)
 		{
-			case 'Pad-Right' | 'Pad-Left' | 'Pad-Custom':
-				controls.setVirtualPadNOTES(mobileControls.virtualPad, RIGHT_FULL, NONE);
-			case 'Pad-Duo':
-				controls.setVirtualPadNOTES(mobileControls.virtualPad, BOTH_FULL, NONE);
-			case 'Hitbox':
-				controls.setHitBox(mobileControls.hitbox);
-			case 'Keyboard': // do nothing
+			case VIRTUALPAD_RIGHT | VIRTUALPAD_LEFT | VIRTUALPAD_CUSTOM:
+				controls.setVirtualPadNOTES(mobilec.vpad, FULL, NONE);
+				MusicBeatState.checkHitbox = false;
+			case DUO:
+				controls.setVirtualPadNOTES(mobilec.vpad, DUO, NONE);
+				MusicBeatState.checkHitbox = false;
+			case HITBOX:
+				if(ClientPrefs.hitboxmode != 'New')
+				    controls.setHitBox(mobilec.hbox);
+				else
+				    controls.setNewHitBox(mobilec.newhbox);
+				MusicBeatState.checkHitbox = true;
+			default:
 		}
 
-		trackedInputsMobileControls = controls.trackedInputsNOTES;
+		trackedinputsNOTES = controls.trackedInputsNOTES;
 		controls.trackedInputsNOTES = [];
 
-		var camControls:FlxCamera = new FlxCamera();
-		camControls.bgColor.alpha = 0;
-		FlxG.cameras.add(camControls, DefaultDrawTarget);
+		var camcontrol = new flixel.FlxCamera();
+		FlxG.cameras.add(camcontrol, false);
+		camcontrol.bgColor.alpha = 0;
+		mobilec.cameras = [camcontrol];
 
-		mobileControls.cameras = [camControls];
-		mobileControls.visible = false;
-		add(mobileControls);
+		add(mobilec);
 	}
-
-	public function removeMobileControls():Void
-	{
-		if (trackedInputsMobileControls.length > 0)
-			controls.removeVirtualControlsInput(trackedInputsMobileControls);
-
-		if (mobileControls != null)
-			remove(mobileControls);
+	
+    public function addVirtualPadCamera() {
+		var camcontrol = new flixel.FlxCamera();
+		camcontrol.bgColor.alpha = 0;
+		FlxG.cameras.add(camcontrol, false);
+		_virtualpad.cameras = [camcontrol];
 	}
+	
+	override function destroy() {
+		if (trackedinputsNOTES.length > 0)
+			controls.removeVirtualControlsInput(trackedinputsNOTES);
 
-	public function addVirtualPadCamera(DefaultDrawTarget:Bool = true):Void
-	{
-		if (virtualPad != null)
-		{
-			var camControls:FlxCamera = new FlxCamera();
-			camControls.bgColor.alpha = 0;
-			FlxG.cameras.add(camControls, DefaultDrawTarget);
-			virtualPad.cameras = [camControls];
-		}
-	}
-	#end
-
-	override function destroy():Void
-	{
-		#if mobileC
-		if (trackedInputsMobileControls.length > 0)
-			controls.removeVirtualControlsInput(trackedInputsMobileControls);
-
-		if (trackedInputsVirtualPad.length > 0)
-			controls.removeVirtualControlsInput(trackedInputsVirtualPad);
-		#end
+		if (trackedinputsUI.length > 0)
+			controls.removeVirtualControlsInput(trackedinputsUI);
 
 		super.destroy();
 
-		#if mobileC
-		if (virtualPad != null)
-			virtualPad = FlxDestroyUtil.destroy(virtualPad);
+		if (_virtualpad != null)
+			_virtualpad = FlxDestroyUtil.destroy(_virtualpad);
 
-		if (mobileControls != null)
-			mobileControls = FlxDestroyUtil.destroy(mobileControls);
-		#end
+		if (mobilec != null)
+			mobilec = FlxDestroyUtil.destroy(mobilec);
 	}
+	#end
 
 	override function create() {
 		camBeat = FlxG.camera;

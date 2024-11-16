@@ -135,10 +135,6 @@ class MainMenuState extends MusicBeatState
 		#end
 		#end
 
-		#if mobileC
-                addVirtualPad(UP_DOWN, A_B_E);
-                #end
-
 		super.create();
 
 		FlxG.camera.follow(camFollow, null, 0.06);
@@ -251,7 +247,7 @@ class MainMenuState extends MusicBeatState
 				}
 			}
 			#if (desktop || mobile)
-			if (FlxG.keys.anyJustPressed(debugKeys) #if mobileC || virtualPad.buttonE.justPressed #end)
+			if (FlxG.keys.anyJustPressed(debugKeys))
 			{
 				selectedSomethin = true;
 				FlxTransitionableState.skipNextTransIn = false;

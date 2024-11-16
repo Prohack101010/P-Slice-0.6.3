@@ -397,7 +397,7 @@ class Paths
 
 	#if MODS_ALLOWED
 	inline static public function mods(key:String = '') {
-		return 'mods/' + key;
+		return Sys.getCwd() + 'mods/' + key;
 	}
 
 	inline static public function modsFont(key:String) {
@@ -473,7 +473,7 @@ class Paths
 				}
 				#end
 			}
-			return 'mods/' + key;
+			return Sys.getCwd() + 'mods/' + key;
 		}
 	
 		#if linux
