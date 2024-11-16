@@ -46,6 +46,11 @@ enum abstract Action(String) to String from String
 	var BACK = "back";
 	var PAUSE = "pause";
 	var RESET = "reset";
+	var FAVORIYE = "favorite";
+	var BAR_LEFT = "bar_left";
+	var BAR_RIGHT = "bar_right";
+	var SCREENSHOT = "screenshot";
+	var CHAR_SELECT = "char_select";
 	var EXTRA1 = 'extra1';
 	var EXTRA1_P = 'extra1-press';
 	var EXTRA1_R = 'extra1-release';
@@ -58,11 +63,6 @@ enum abstract Action(String) to String from String
 	var EXTRA4 = 'extra4';
 	var EXTRA4_P = 'extra4-press';
 	var EXTRA4_R = 'extra4-release';
-	var FAVORIYE = "favorite";
-	var BAR_LEFT = "bar_left";
-	var BAR_RIGHT = "bar_right";
-	var SCREENSHOT = "screenshot";
-	var CHAR_SELECT = "char_select";
 }
 
 enum Device
@@ -95,6 +95,10 @@ enum Control
 	BAR_RIGHT;
 	SCREENSHOT;
 	CHAR_SELECT;
+	EXTRA1;
+	EXTRA2;
+	EXTRA3;
+	EXTRA4;
 }
 
 enum KeyboardScheme
@@ -139,6 +143,11 @@ class Controls extends FlxActionSet
 	var _back = new FlxActionDigital(Action.BACK);
 	var _pause = new FlxActionDigital(Action.PAUSE);
 	var _reset = new FlxActionDigital(Action.RESET);
+	var _favorite = new FlxActionDigital(Action.FAVORIYE);
+	var _bar_left = new FlxActionDigital(Action.BAR_LEFT);
+	var _bar_right= new FlxActionDigital(Action.BAR_RIGHT);
+	var _screenshot= new FlxActionDigital(Action.SCREENSHOT);
+	var _char_select= new FlxActionDigital(Action.CHAR_SELECT);
 	var _extra1 = new FlxActionDigital(Action.EXTRA1);
 	var _extra1P = new FlxActionDigital(Action.EXTRA1_P);
 	var _extra1R = new FlxActionDigital(Action.EXTRA1_R);
@@ -151,11 +160,6 @@ class Controls extends FlxActionSet
 	var _extra4 = new FlxActionDigital(Action.EXTRA4);
 	var _extra4P = new FlxActionDigital(Action.EXTRA4_P);
 	var _extra4R = new FlxActionDigital(Action.EXTRA4_R);
-	var _favorite = new FlxActionDigital(Action.FAVORIYE);
-	var _bar_left = new FlxActionDigital(Action.BAR_LEFT);
-	var _bar_right= new FlxActionDigital(Action.BAR_RIGHT);
-	var _screenshot= new FlxActionDigital(Action.SCREENSHOT);
-	var _char_select= new FlxActionDigital(Action.CHAR_SELECT);
 
 	#if (haxe >= "4.0.0")
 	var byName:Map<String, FlxActionDigital> = [];
@@ -305,8 +309,33 @@ class Controls extends FlxActionSet
 
 	inline function get_RESET()
 		return _reset.check();
-		
-	public var EXTRA1(get, never):Bool;
+
+	public var FAVORITE(get, never):Bool;
+
+    inline function get_FAVORITE()
+        return _favorite.check();
+
+	public var BAR_LEFT(get, never):Bool;
+
+    inline function get_BAR_LEFT()
+        return _bar_left.check();
+
+	public var BAR_RIGHT(get, never):Bool;
+
+    inline function get_BAR_RIGHT()
+        return _bar_right.check();
+
+	public var SCREENSHOT(get, never):Bool;
+
+    inline function get_SCREENSHOT()
+        return _screenshot.check();
+
+	public var CHAR_SELECT(get, never):Bool;
+
+	inline function get_CHAR_SELECT()
+        return _char_select.check();
+        
+    public var EXTRA1(get, never):Bool;
 
 	inline function get_EXTRA1()
 		return _extra1.check();		
@@ -366,31 +395,6 @@ class Controls extends FlxActionSet
 	inline function get_EXTRA4_P()
 		return _extra4P.check();
 
-	public var FAVORITE(get, never):Bool;
-
-    inline function get_FAVORITE()
-        return _favorite.check();
-
-	public var BAR_LEFT(get, never):Bool;
-
-    inline function get_BAR_LEFT()
-        return _bar_left.check();
-
-	public var BAR_RIGHT(get, never):Bool;
-
-    inline function get_BAR_RIGHT()
-        return _bar_right.check();
-
-	public var SCREENSHOT(get, never):Bool;
-
-    inline function get_SCREENSHOT()
-        return _screenshot.check();
-
-	public var CHAR_SELECT(get, never):Bool;
-
-	inline function get_CHAR_SELECT()
-        return _char_select.check();
-
 	public function new(name, scheme = None)
 	{
 		super(name);
@@ -423,6 +427,11 @@ class Controls extends FlxActionSet
 		add(_back);
 		add(_pause);
 		add(_reset);
+		add(_favorite);
+		add(_bar_right);
+		add(_bar_left);
+		add(_screenshot);
+		add(_char_select);
 		add(_extra1);
 		add(_extra1P);
 		add(_extra1R);
@@ -435,11 +444,6 @@ class Controls extends FlxActionSet
 		add(_extra4);
 		add(_extra4P);
 		add(_extra4R);
-		add(_favorite);
-		add(_bar_right);
-		add(_bar_left);
-		add(_screenshot);
-		add(_char_select);
 
 		for (action in digitalActions)
 			byName[action.name] = action;
@@ -672,15 +676,15 @@ class Controls extends FlxActionSet
 			case BACK: _back;
 			case PAUSE: _pause;
 			case RESET: _reset;
-			case EXTRA1: _extra1;
-			case EXTRA2: _extra2;		
-			case EXTRA3: _extra3;
-			case EXTRA4: _extra4;
 			case FAVORITE: _favorite;
 			case BAR_LEFT: _bar_left;
 			case BAR_RIGHT: _bar_right;
 			case SCREENSHOT: _screenshot;
 			case CHAR_SELECT: _char_select;
+			case EXTRA1: _extra1;
+			case EXTRA2: _extra2;		
+			case EXTRA3: _extra3;
+			case EXTRA4: _extra4;
 		}
 	}
 
@@ -740,6 +744,16 @@ class Controls extends FlxActionSet
 				func(_pause, JUST_PRESSED);
 			case RESET:
 				func(_reset, JUST_PRESSED);
+			case FAVORITE: 
+				func(_favorite, JUST_PRESSED);
+			case BAR_LEFT: 
+				func(_bar_left, JUST_PRESSED);
+			case BAR_RIGHT: 
+				func(_bar_right, JUST_PRESSED);
+			case SCREENSHOT: 
+				func(_screenshot, JUST_PRESSED);
+			case CHAR_SELECT: 
+				func(_char_select, JUST_PRESSED);
 			case EXTRA1:
 				func(_extra1, PRESSED);
 				func(_extra1P, JUST_PRESSED);
@@ -756,16 +770,6 @@ class Controls extends FlxActionSet
 				func(_extra4, PRESSED);
 				func(_extra4P, JUST_PRESSED);
 				func(_extra4R, JUST_RELEASED);
-			case FAVORITE: 
-				func(_favorite, JUST_PRESSED);
-			case BAR_LEFT: 
-				func(_bar_left, JUST_PRESSED);
-			case BAR_RIGHT: 
-				func(_bar_right, JUST_PRESSED);
-			case SCREENSHOT: 
-				func(_screenshot, JUST_PRESSED);
-			case CHAR_SELECT: 
-				func(_char_select, JUST_PRESSED);
 		}
 	}
 
