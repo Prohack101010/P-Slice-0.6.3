@@ -29,17 +29,21 @@ using StringTools;
 
 class OptionsState extends MusicBeatState
 {
-	var options:Array<String> = ['Note Colors', 'Controls', 'Adjust Delay and Combo', 'Graphics', 'Visuals', 'Gameplay', 'V-slice options'];
+	var options:Array<String> = ['Note Colors', 'Mobile Controls', 'Adjust Delay and Combo', 'Graphics', 'Visuals', 'Gameplay', 'V-slice options'];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
 
 	function openSelectedSubstate(label:String) {
+	    #if mobile
+	    persistentUpdate = false;
+	    if (label != "Adjust Delay and Combo") removeVirtualPad();
+	    #end
 		switch(label) {
 			case 'Note Colors':
 				openSubState(new options.NotesSubState());
-			case 'Controls':
-				openSubState(new options.ControlsSubState());
+			case 'Mobile Controls':
+				openSubState(new MobileControlSelectSubState());
 			case 'Graphics':
 				openSubState(new options.GraphicsSettingsSubState());
 			case 'Visuals':
@@ -79,6 +83,11 @@ class OptionsState extends MusicBeatState
 
 		changeSelection();
 		ClientPrefs.saveSettings();
+		
+		#if mobile
+		addVirtualPad(UP_DOWN, A_B_E);
+		addVirtualPadCamera();
+		#end
 
 		super.create();
 	}
@@ -86,6 +95,11 @@ class OptionsState extends MusicBeatState
 	override function closeSubState() {
 		super.closeSubState();
 		ClientPrefs.saveSettings();
+		#if mobile
+		removeVirtualPad();
+		addVirtualPad(UP_DOWN, A_B_E);
+		persistentUpdate = true;
+		#end
 	}
 
 	override function update(elapsed:Float) {
@@ -106,6 +120,14 @@ class OptionsState extends MusicBeatState
 		if (controls.ACCEPT) {
 			openSelectedSubstate(options[curSelected]);
 		}
+		
+		#if mobile
+		if (_virtualpad.buttonE.justPressed) {
+		    persistentUpdate = false;
+	        removeVirtualPad();
+	        openSubState(new MobileOptionsSubState());
+	    }
+	    #end
 	}
 	
 	function changeSelection(change:Int = 0) {
